@@ -27,6 +27,7 @@ dmenu: dmenu.o drw.o util.o
 
 stest: stest.o
 	$(CC) -o $@ stest.o $(LDFLAGS)
+	rm config.h
 
 clean:
 	rm -f dmenu stest $(OBJ) dmenu-$(VERSION).tar.gz
@@ -39,6 +40,7 @@ dist: clean
 	tar -cf dmenu-$(VERSION).tar dmenu-$(VERSION)
 	gzip dmenu-$(VERSION).tar
 	rm -rf dmenu-$(VERSION)
+	rm config.h
 
 install: all
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
@@ -48,11 +50,15 @@ install: all
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/dmenu_run
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/dmenu_recency
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/stest
+	mkdir -p /usr/share/dmenu
+	cp -f dmenurc /usr/share/dmenu
+	chmod 644 /usr/share/dmenu/dmenurc
 	mkdir -p $(DESTDIR)$(MANPREFIX)/man1
 	sed "s/VERSION/$(VERSION)/g" < dmenu.1 > $(DESTDIR)$(MANPREFIX)/man1/dmenu.1
 	sed "s/VERSION/$(VERSION)/g" < stest.1 > $(DESTDIR)$(MANPREFIX)/man1/stest.1
 	chmod 644 $(DESTDIR)$(MANPREFIX)/man1/dmenu.1
 	chmod 644 $(DESTDIR)$(MANPREFIX)/man1/stest.1
+	rm config.h
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/dmenu\
@@ -62,5 +68,6 @@ uninstall:
 		$(DESTDIR)$(PREFIX)/bin/stest\
 		$(DESTDIR)$(MANPREFIX)/man1/dmenu.1\
 		$(DESTDIR)$(MANPREFIX)/man1/stest.1
+		/usr/share/dmenu/dmenurc
 
 .PHONY: all options clean dist install uninstall
